@@ -1,0 +1,6 @@
+{
+    "name" : "solleer/regex-module-json",
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}
