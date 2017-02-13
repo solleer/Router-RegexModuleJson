@@ -1,5 +1,5 @@
 {
-    "name" : "solleer/router-regex-modulejson",
+    "name" : "solleer/router-regexmodulejson",
     "autoload": {
         "classmap": ["src/"]
     },
