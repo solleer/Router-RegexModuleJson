@@ -1,9 +1,9 @@
 <?php
-namespace Config\Router;
+namespace Solleer\Router;
 class RegexModuleJson implements \Level2\Router\Rule {
     private $jsonModule;
 
-    public function __construct(ModuleJson $moduleJson) {
+    public function __construct(\Config\Router\ModuleJson $moduleJson) {
         $this->moduleJson = $moduleJson;
     }
 

@@ -1,6 +1,9 @@
 {
-    "name" : "solleer/regex-module-json",
+    "name" : "solleer/router-regex-modulejson",
     "autoload": {
         "classmap": ["src/"]
+    },
+    "require" : {
+        "level2/router-modulejson" : "dev-master"
     }
 }
