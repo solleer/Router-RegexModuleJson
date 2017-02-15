@@ -4,6 +4,6 @@
         "classmap": ["src/"]
     },
     "require" : {
-        "level2/router-modulejson" : "dev-master"
+        "level-2/router-modulejson" : "dev-master"
     }
 }
