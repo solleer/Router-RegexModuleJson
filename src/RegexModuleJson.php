@@ -11,8 +11,9 @@ class RegexModuleJson implements \Level2\Router\Rule {
         if (count($route) == 0 || $route[0] == '') return false;
         $moduleName = $route[0];
 
-        $config = $this->moduleJson->getConfig($route)->conditions;
-        $config = json_decode(json_encode($config), true);
+        $config = $this->moduleJson->getConfig($route);
+        if (!$config) return false;
+        $config = json_decode(json_encode($config->conditions ?? []), true);
 
         $newRoute = $this->getRoute($route, $config);
         $route = array_merge([$moduleName], $newRoute !== false ? $newRoute : $route);
@@ -36,7 +37,7 @@ class RegexModuleJson implements \Level2\Router\Rule {
         foreach ($routeRegex as $key => $regex) {
             $result = preg_match($regex, $route[$key], $matches);
             if ($result !== 1) return false;
-            $newRoute = array_merge($newRoute, array_slice($matches, 1));
+            $newRoute = array_merge($newRoute, $matches);
         }
         return $newRoute;
     }
