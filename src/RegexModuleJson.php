@@ -16,12 +16,13 @@ class RegexModuleJson implements \Level2\Router\Rule {
         $config = json_decode(json_encode($config->conditions ?? []), true);
 
         $newRoute = $this->getRoute($route, $config);
-        $route = array_merge([$moduleName], $newRoute !== false ? $newRoute : $route);
+        $route = $newRoute ? array_merge([$moduleName], $newRoute) : $route;
 
         return $this->moduleJson->find($route);
     }
 
     private function getRoute($route, $config) {
+        array_shift($route);
         foreach ($config as $routeName => $routeRegex) {
             $newRoute = $this->matchRoute($route, $routeRegex);
             if ($newRoute !== false) {
@@ -35,8 +36,9 @@ class RegexModuleJson implements \Level2\Router\Rule {
     private function matchRoute(array $route, array $routeRegex) {
         $newRoute = [];
         foreach ($routeRegex as $key => $regex) {
-            $result = preg_match($regex, $route[$key], $matches);
+            $result = preg_match($regex, $route[$key] ?? '', $matches);
             if ($result !== 1) return false;
+            array_shift($matches);
             $newRoute = array_merge($newRoute, $matches);
         }
         return $newRoute;
