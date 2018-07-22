@@ -3,7 +3,7 @@ namespace Solleer\Router;
 class RegexModuleJson implements \Level2\Router\Rule {
     private $jsonModule;
 
-    public function __construct(\Config\Router\ModuleJson $moduleJson) {
+    public function __construct(\Level2\Router\Config\ModuleJson $moduleJson) {
         $this->moduleJson = $moduleJson;
     }
 
@@ -13,7 +13,7 @@ class RegexModuleJson implements \Level2\Router\Rule {
 
         $config = $this->moduleJson->getConfig($route);
         if (!$config) return false;
-        $config = json_decode(json_encode($config->conditions ?? []), true);
+        $config = json_decode(json_encode($config['conditions'] ?? []), true);
 
         $newRoute = $this->getRoute($route, $config);
         $route = $newRoute ? array_merge([$moduleName], $newRoute) : $route;
