@@ -4,7 +4,7 @@
         "classmap": ["src/"]
     },
     "require" : {
-        "level-2/config-router-modulejson" : "dev-master"
+        "level-2/router-modulejson" : "dev-master"
     },
     "minimum-stability" : "dev"
 }
