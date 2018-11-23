@@ -4,7 +4,7 @@ class RegexModuleJson implements \Level2\Router\Rule {
     private $jsonModule;
     private $dice;
 
-    public function __construct(\Config\Router\ModuleJson $moduleJson, \Dice\Dice $dice) {
+    public function __construct(\Level2\Router\Config\ModuleJson $moduleJson, \Dice\Dice $dice) {
         $this->moduleJson = $moduleJson;
         $this->dice = $dice;
     }
