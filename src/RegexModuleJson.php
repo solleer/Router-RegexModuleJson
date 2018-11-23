@@ -2,9 +2,11 @@
 namespace Solleer\Router;
 class RegexModuleJson implements \Level2\Router\Rule {
     private $jsonModule;
+    private $dice;
 
-    public function __construct(\Level2\Router\Config\ModuleJson $moduleJson) {
+    public function __construct(\Config\Router\ModuleJson $moduleJson, \Dice\Dice $dice) {
         $this->moduleJson = $moduleJson;
+        $this->dice = $dice;
     }
 
     public function find(array $route) {
@@ -13,10 +15,15 @@ class RegexModuleJson implements \Level2\Router\Rule {
 
         $config = $this->moduleJson->getConfig($route);
         if (!$config) return false;
-        $config = json_decode(json_encode($config['conditions'] ?? []), true);
+        $conditionsConfig = json_decode(json_encode($config->conditions ?? []), true);
 
-        $newRoute = $this->getRoute($route, $config);
+        $newRoute = $this->getRoute($route, $conditionsConfig);
         $route = $newRoute ? array_merge([$moduleName], $newRoute) : $route;
+
+        $authConfig = json_decode(json_encode($config->authorize ?? []), true);
+        $authPass = $this->checkAuthorize($authConfig, $route);
+        if ($authPass !== true) return $authPass;
+
 
         return $this->moduleJson->find($route);
     }
@@ -43,4 +50,36 @@ class RegexModuleJson implements \Level2\Router\Rule {
         }
         return $newRoute;
     }
+
+    private function checkAuthorize($config, $route) {
+        $matched = false;
+        foreach ($config as $item) {
+            if ($this->checkAuthRoutes($item['routes'], $route)) {
+                $matched = $item;
+                break;
+            }
+        }
+
+        if (!$matched) return true;
+
+        $authObj = $this->dice->create($matched['instanceOf']);
+
+        list($func, $params) = $matched['call'];
+
+        if ($authObj->{$func}(...$params)) return true;
+        else return $this->dice->create($matched['redirect']);
+
+    }
+
+    private function checkAuthRoutes($routes, $route) {
+        $route[1] = $route[1] ?? '';
+        foreach ($routes as $routeItem){
+            if ($routeItem === $route[1]) // They have the same route name
+                return true;
+        }
+
+        return false;
+    }
+
+
 }
