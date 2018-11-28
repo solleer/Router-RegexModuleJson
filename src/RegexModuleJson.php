@@ -15,12 +15,12 @@ class RegexModuleJson implements \Level2\Router\Rule {
 
         $config = $this->moduleJson->getConfig($route);
         if (!$config) return false;
-        $conditionsConfig = json_decode(json_encode($config->conditions ?? []), true);
+        $conditionsConfig = json_decode(json_encode($config['conditions'] ?? []), true);
 
         $newRoute = $this->getRoute($route, $conditionsConfig);
         $route = $newRoute ? array_merge([$moduleName], $newRoute) : $route;
 
-        $authConfig = json_decode(json_encode($config->authorize ?? []), true);
+        $authConfig = json_decode(json_encode($config['authorize'] ?? []), true);
         $authPass = $this->checkAuthorize($authConfig, $route);
         if ($authPass !== true) return $authPass;
 
