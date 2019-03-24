@@ -1,10 +1,16 @@
 {
     "name" : "solleer/router-regexmodulejson",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/solleer/Router-ModuleJson"
+        }
+    ],
     "autoload": {
         "classmap": ["src/"]
     },
     "require" : {
-        "level-2/router-modulejson" : "dev-master"
+        "level-2/config-router-modulejson" : "dev-patch-8"
     },
     "minimum-stability" : "dev"
 }

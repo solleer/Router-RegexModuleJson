@@ -1,6 +1,6 @@
 <?php
 use Solleer\Router\RegexModuleJson;
-class RegexModuleJsonTest extends PHPUnit_Framework_TestCase {
+class RegexModuleJsonTest extends PHPUnit\Framework\TestCase {
     private $json = <<<EOD
     {
         "conditions" : {
@@ -10,39 +10,38 @@ class RegexModuleJsonTest extends PHPUnit_Framework_TestCase {
     }
 EOD;
 
-    private function getModuleJson($find = [], $json = null) {
-        $moduleJson = $this->createMock('Config\Router\ModuleJson');
+    private function getRegexModuleJson($find = [], $json = null) {
+        $moduleJson = $this->createMock('Level2\Router\Config\ModuleJson');
 
         $moduleJson->expects($this->once())
                  ->method('find')
                  ->with($this->equalTo($find));
 
         $moduleJson->method('getConfig')
-                    ->willReturn(json_decode($json ?? $this->json));
+                    ->willReturn(json_decode($json ?? $this->json, true));
 
-        return $moduleJson;
+
+        $authorize = $this->createMock('Solleer\Router\ModuleJsonAuthorize');
+        $authorize->method('checkAuthorize')
+            ->willReturn(true);
+
+        return new RegexModuleJson($moduleJson, $authorize);
     }
 
     public function testNormalModuleJson() {
-        $moduleJson = $this->getModuleJson(['test']);
-
-        $regexModule = new RegexModuleJson($moduleJson);
+        $regexModule = $this->getRegexModuleJson(['test']);
 
         $regexModule->find(['test']);
     }
 
     public function testOneConditionCapture() {
-        $moduleJson = $this->getModuleJson(['events', 'event', '11']);
-
-        $regexModule = new RegexModuleJson($moduleJson);
+        $regexModule = $this->getRegexModuleJson(['events', 'event', '11']);
 
         $regexModule->find(['events', '11']);
     }
 
     public function testMultipleConditionsCapture() {
-        $moduleJson = $this->getModuleJson(['events', 'calendar', '2017', '10']);
-
-        $regexModule = new RegexModuleJson($moduleJson);
+        $regexModule = $this->getRegexModuleJson(['events', 'calendar', '2017', '10']);
 
         $regexModule->find(['events', '2017', '10']);
     }
@@ -56,9 +55,7 @@ EOD;
             }
         }
 EOD;
-        $moduleJson = $this->getModuleJson(['events', 'calendar', '10'], $json);
-
-        $regexModule = new RegexModuleJson($moduleJson);
+        $regexModule = $this->getRegexModuleJson(['events', 'calendar', '10'], $json);
 
         $regexModule->find(['events', '2017', '10']);
     }
