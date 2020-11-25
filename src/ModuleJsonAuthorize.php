@@ -11,23 +11,17 @@ class ModuleJsonAuthorize {
     }
 
     public function checkAuthorize($config, $route) {
-        $matched = false;
         foreach ($config as $item) {
             if ($this->checkAuthRoutes($item['routes'], $route)) {
-                $matched = $item;
-                break;
+                $authObj = $this->dice->create($item['instanceOf']);
+
+                list($func, $params) = $item['call'];
+
+                if (!$authObj->{$func}(...$params)) return $this->dice->create($item['redirect']);
             }
         }
 
-        if (!$matched) return true;
-
-        $authObj = $this->dice->create($matched['instanceOf']);
-
-        list($func, $params) = $matched['call'];
-
-        if ($authObj->{$func}(...$params)) return true;
-        else return $this->dice->create($matched['redirect']);
-
+        return true;
     }
 
     private function checkAuthRoutes($routes, $route) {
